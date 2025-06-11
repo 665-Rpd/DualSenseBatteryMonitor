@@ -1,0 +1,63 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <ApplicationIcon>icons\window\BatteryMonitor.ico</ApplicationIcon>
+    <SignAssembly>False</SignAssembly>
+    <EnableNETAnalyzers>False</EnableNETAnalyzers>
+    <PlatformTarget>x86</PlatformTarget>
+    <GenerateDocumentationFile>False</GenerateDocumentationFile>
+    <ErrorReport>none</ErrorReport>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DebugType>full</DebugType>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DebugType>none</DebugType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="icons\battery\battery.png" />
+    <None Remove="icons\battery\charging.png" />
+    <None Remove="icons\controller\dualsense_connected.png" />
+    <None Remove="icons\controller\dualsense_not_connected.png" />
+    <None Remove="icons\window\BatteryMonitor.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Remove="icons\battery\battery.xaml" />
+    <Page Remove="icons\battery\charging.xaml" />
+    <Page Remove="icons\controller\dualsense_connected.xaml" />
+    <Page Remove="icons\controller\dualsense_connected_drawingimage.xaml" />
+    <Page Remove="icons\controller\dualsense_not_connected.xaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="HidSharp" Version="2.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="icons\battery\battery.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="icons\battery\charging.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="icons\controller\dualsense_connected.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="icons\controller\dualsense_not_connected.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="icons\window\BatteryMonitor.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
+
+</Project>
