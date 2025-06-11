@@ -8,7 +8,7 @@
 * ✅ Auto-starts with Windows
 * 🔋 Accurate battery monitoring every 5 seconds
 * ⚠️ Only shows when battery is low
-* 🧠 Silent and unobtrusive otherwise
+* 🧠 Silent
 
 > [!NOTE]
 > This only works on Windows systems
