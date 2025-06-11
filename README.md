@@ -10,6 +10,9 @@
 * ⚠️ Only shows when battery is low
 * 🧠 Silent and unobtrusive otherwise
 
+> [!NOTE]
+> This only works on Windows systems
+
 ## 🕹️ Use Case
 This utility is perfect for:
 * Users who use PS5 controllers on PC and want a non-intrusive, visual heads-up for low battery levels
@@ -38,6 +41,24 @@ Two versions are provided:
 No manual configuration is needed. On first launch:
 * The app silently registers itself to **auto-start** with Windows.
 * If **no controller is connected or has low battery**, the app hides itself automatically.
+
+## ❌ Uninstallation
+To completely remove **DualSense Battery Monitor** from your system:
+
+1. **Stop the application from currently running:**
+
+    Find the DualSenseBatteryMonitor.exe process in Task Manager and 'End Task' it.
+2. **Delete the application files:**
+
+    Remove the folder/insides of folder where you extracted the application.
+
+> [!WARNING]
+> **(Optional) (Advanced users only)**
+> **Remove the auto-start registry entry:**
+>
+> 1. Open regedit and navigate to 'HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Run'
+> 
+> 2. Find the entry related to DualSenseBatteryMonitor and delete it to stop the app from launching automatically at startup.
 
 ## 🔗 Inspiration
 This application is inspired by:
