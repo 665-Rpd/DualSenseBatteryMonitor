@@ -45,5 +45,5 @@ This application is inspired by:
 ## 📃 License
 MIT License. See [LICENSE](LICENSE) file for details.
 
-## 🔍 Keywords (SEO)
+## 🔍 Keywords
 DualSense battery overlay, PS5 controller low battery, DualSense WPF utility, DualSense Windows auto-start, gamepad battery warning, .NET 8 controller tool, DualSense battery level Windows 10/11, low battery widget for DualSense, DualSense charge monitor, controller battery status desktop
