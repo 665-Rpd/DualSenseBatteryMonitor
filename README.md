@@ -1,5 +1,7 @@
 # 🔋 DualSense Battery Monitor - Low Battery Warning Overlay for PS5 Controllers
 
+![Screenshot of the DualSense battery monitor on a default Windows 11 desktop](https://github.com/PixelIndieDev/DualSenseBatteryMonitor/blob/main/readme_images/overlay_preview.png?raw=true)
+
 ## ⚡ Never Miss a Low Battery Warning Again
 **DualSense Battery Monitor** is a lightweight Windows utility that automatically alerts you with a **visual overlay** whenever any connected **PlayStation 5 DualSense controller** reaches a low battery level.
 
