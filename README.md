@@ -1,6 +1,6 @@
 # 🔋 DualSense Battery Monitor - Low Battery Warning Overlay for PS5 Controllers
 
-![Screenshot of the DualSense battery monitor on a default Windows 11 desktop](https://github.com/PixelIndieDev/DualSenseBatteryMonitor/blob/main/readme_images/overlay_preview.png?raw=true)
+![Screenshot of the DualSense battery monitor on a default Windows 11 desktop](https://github.com/PixelIndieDev/DualSenseBatteryMonitor/blob/main/readme_images/overlay_preview.avif?raw=true)
 <sub>Overlay is slightly oversized on image</sub>
 
 ## ⚡ Never Miss a Low Battery Warning Again
