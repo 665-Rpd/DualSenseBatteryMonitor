@@ -1,7 +1,7 @@
 ﻿using HidSharp;
 using Microsoft.Win32;
+using System.Buffers;
 using System.Diagnostics;
-using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
@@ -16,7 +16,7 @@ namespace DualSenseBatteryMonitor
     public partial class MainWindow : Window
     {
         //Create Timer
-        private System.Windows.Threading.DispatcherTimer updateTimer = new System.Windows.Threading.DispatcherTimer();
+        private readonly DispatcherTimer updateTimer = new DispatcherTimer(DispatcherPriority.Background);
         //Create controller verables
         private controllerWidget[] controllerWidgets = new controllerWidget[4];
         private int LastControllerCount = 0;
@@ -49,6 +49,9 @@ namespace DualSenseBatteryMonitor
             updateTimer.Tick += new EventHandler(updateTimer_Tick);
             //Interval every 5 seconds
             updateTimer.Interval = new TimeSpan(0, 0, 5);
+
+            //Freeze background gradient to save on memory
+            gradient_background.Freeze();
 
             DoStart();
 
@@ -108,9 +111,6 @@ namespace DualSenseBatteryMonitor
             LastControllerCount = 0;
 
             bool someoneHasLowBattery = false;
-            
-            //Start timer again
-            updateTimer.Start(); 
 
             if (controllerBatterlevels.Count <= 0)
             {
@@ -139,6 +139,9 @@ namespace DualSenseBatteryMonitor
             //Update Window on screen or not
             //Window will be on screen when a battery is lower then a certain amount
             ShouldShowWindow(someoneHasLowBattery);
+
+            //Start timer again
+            updateTimer.Start();
         }
 
         private void Refresh_NoControllers()
@@ -168,7 +171,6 @@ namespace DualSenseBatteryMonitor
 
         private void ShouldShowWindow(bool lowBattery)
         {
-            lowBattery = true;
             //Someone has low battery
             if (lowBattery)
             {
@@ -208,12 +210,16 @@ namespace DualSenseBatteryMonitor
 
             foreach (var controller in controllers)
             {
+                byte[] inputBuffer = null; //Declare buffer outside for use in finally
+
                 try
                 {
+                    //Rent a byte array from the shared pool (avoids repeated allocations)
+                    inputBuffer = ArrayPool<byte>.Shared.Rent(controller.GetMaxInputReportLength());
+
                     using (var stream = controller.Open())
                     {
-                        await Task.Delay(500); // Add a small delay before reading data
-                        byte[] inputBuffer = new byte[controller.GetMaxInputReportLength()];
+                        await Task.Yield(); // Add a small delay before reading data
                         int bytesRead = stream.Read(inputBuffer, 0, inputBuffer.Length);
 
                         //If data is received from the controller, process it
@@ -229,13 +235,13 @@ namespace DualSenseBatteryMonitor
                             //Bluetooth has length of 78 and 3 modes:
                             else if (bytesRead == 78)
                             {
-                                //0x31 header - full readout mode includes trackpad, impulse triggers, battery level and charging info, everything !
+                                //0x31 header - Full BT report
                                 if (inputBuffer[0] == 0x31)
                                 {
                                     //In Bluetooth mode 0x31 battery level is at 54 and charging info is at 55
                                     //In Bluetooth charging seems to be indicated by 16 if charging and 0 when not
-                                    result[index++] = (getBatteryPercentage( inputBuffer[54], inputBuffer[55]), inputBuffer[55] > 0);
-                                } //0x01 header may indicate two bluetooth modes
+                                    result[index++] = (getBatteryPercentage(inputBuffer[54], inputBuffer[55]), inputBuffer[55] > 0);
+                                } //0x01 header may indicate two bluetooth modes - Basic or Minimal BT report
                                 else if (inputBuffer[0] == 0x01)
                                 {
                                     //Check for many 0's in the data (ignoring the first few bytes)
@@ -252,32 +258,48 @@ namespace DualSenseBatteryMonitor
                                     //This mode is usually only seen when bluetooth module or pc was restarted and "fresh connection" is made
                                     if (zeroCount > 70)
                                     {
-                                        // Read "Magic Packet" to "wake" controller to 0x31 (Full Bluetooth mode)
+                                        //Minimal Bluetooth mode (mostly empty), try waking up
+                                        //Read "Magic Packet" to "wake" controller to 0x31 (Full Bluetooth mode)
                                         WaketofullBT(controller);
+                                        result[index++] = (1111, false);
+                                    } else
+                                    {
+                                        //Basic Bluetooth mode, try waking up as well
+                                        WaketofullBT(controller);
+                                        //Use unreachable batterylevel for "error" code
                                         result[index++] = (1111, false);
                                     }
 
                                 }
                                 else
                                 {
-                                    //0x01 when not mostly empty indicates "Basic Bluetooth", it sends button presses and some more info along with battery info but no charging status
-                                    //Read "Magic Packet" to "wake" controller to 0x31 (Full Bluetooth mode)
-                                    WaketofullBT(controller);
+                                    //Unknown Bluetooth report format
                                     //Use unreachable batterylevel for "error" code
-                                    result[index++] = (1111, false);
+                                    result[index++] = (1115, false);
                                 }
                             }
                             else
                             {
+                                //Unknown report length
                                 //Use unreachable batterylevel for "error" code
                                 result[index++] = (888, false); //Unknown format
                             }
                         }
                     }
                 }
-                catch
+                catch (Exception ex)
                 {
-                    //Could not open or read, silently continue
+                    #if DEBUG
+                    Debug.WriteLine($"[Warning] Could not read controller: {ex.Message}");
+                    #endif
+                }
+                finally
+                {
+                    //Always return the buffer to the pool, even on exception
+                    if (inputBuffer != null)
+                    {
+                        ArrayPool<byte>.Shared.Return(inputBuffer);
+                    }
                 }
             }
 
@@ -303,13 +325,17 @@ namespace DualSenseBatteryMonitor
                 else
                 {
                     //Could not open device
+                    #if DEBUG
                     Debug.WriteLine("Couldn't open device");
+                    #endif
                 }
             }
             catch (Exception ex)
             {
                 //Catch exception wake
+                #if DEBUG
                 Debug.WriteLine($"Error: {ex.Message}");
+                #endif
             }
         }
 

@@ -23,8 +23,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="icons\connection\**" />
+    <EmbeddedResource Remove="icons\connection\**" />
+    <None Remove="icons\connection\**" />
+    <Page Remove="icons\connection\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="icons\battery\battery.png" />
     <None Remove="icons\battery\charging.png" />
+    <None Remove="icons\battery\warning.png" />
     <None Remove="icons\controller\dualsense_connected.png" />
     <None Remove="icons\controller\dualsense_not_connected.png" />
     <None Remove="icons\window\BatteryMonitor.ico" />
@@ -47,6 +55,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
     <Resource Include="icons\battery\charging.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="icons\battery\warning.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
     <Resource Include="icons\controller\dualsense_connected.png">

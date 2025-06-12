@@ -10,13 +10,12 @@
     <Grid>
         <Border BorderThickness="1,1,1,1" CornerRadius="20,0,0,20" SnapsToDevicePixels="True" ClipToBounds="True" ScrollViewer.VerticalScrollBarVisibility="Disabled">
             <Border.Background>
-                <LinearGradientBrush EndPoint="0,0" StartPoint="1,1" SpreadMethod="Pad">
+                <LinearGradientBrush x:Name="gradient_background" EndPoint="0,0" StartPoint="1,1" SpreadMethod="Pad">
                     <GradientStop Color="#FF00439C" Offset="0"/>
                     <GradientStop Color="#FF1F1F1F" Offset="1"/>
                 </LinearGradientBrush>
             </Border.Background>
-            <ListBox x:Name="flowLayout_controller" Grid.Row="1" Grid.Column="4" Foreground="White" Focusable="False" IsTextSearchEnabled="False" ClipToBounds="True" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Disabled" BorderBrush="{x:Null}" Background="{x:Null}" Margin="15,0,0,0">
-            </ListBox>
+            <ListBox x:Name="flowLayout_controller" Grid.Row="1" Grid.Column="4" Foreground="White" Focusable="False" IsTextSearchEnabled="False" ClipToBounds="True" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Disabled" BorderBrush="{x:Null}" Background="{x:Null}" Margin="15,0,0,0"></ListBox>
         </Border>
     </Grid>
 </Window>

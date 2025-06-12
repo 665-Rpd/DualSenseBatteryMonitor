@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
@@ -15,6 +14,13 @@ namespace DualSenseBatteryMonitor
         //Opacity values for connected and disconnected states
         private const float enabled_opacity = 0.7f;
         private const float disabled_opacity = 0.4f; //Kinda deprecated
+
+        //Controller icon cache to reduce memory allocations
+        private static readonly BitmapImage ControllerConnectedIcon = new BitmapImage(new Uri(@"/icons/controller/dualsense_connected.png", UriKind.Relative));
+        private static readonly BitmapImage ControllerDisconnectedIcon = new BitmapImage(new Uri(@"/icons/controller/dualsense_not_connected.png", UriKind.Relative));
+
+        //HueToGradient cache to avoid creating duplicate gradient brushes for similar hues
+        private static readonly Dictionary<int, LinearGradientBrush> gradientCache = new();
 
         //Player colors
         private LinearGradientBrush color_player_01 = new LinearGradientBrush();
@@ -66,12 +72,16 @@ namespace DualSenseBatteryMonitor
                     //No controllers, show "disconnected" icon
                     //Will still not be visible as the application is not visible when no dualsense controllers are plugged in, kinda useless code now :\
                     Visibility = Visibility.Visible;
-                    image_controller_icon.Source = new BitmapImage(new Uri(@"/icons/controller/dualsense_not_connected.png", UriKind.Relative));
+
+                    //Set controller icon using cached icon
+                    if (image_controller_icon.Source != ControllerDisconnectedIcon)
+                        image_controller_icon.Source = ControllerDisconnectedIcon;
+
                     //Make icon darker when no controller is connected
                     image_controller_icon.Opacity = disabled_opacity;
 
                     progressbar_battery.Value = 0;
-                    progressbar_battery.Foreground = new System.Windows.Media.SolidColorBrush(ColorFromHue(0));
+                    progressbar_battery.Foreground = HueToGradient(batterylevel);
 
                     SetChargingIconActive(isCharging);
 
@@ -86,15 +96,46 @@ namespace DualSenseBatteryMonitor
                     //Show controller as connected
                     Visibility = Visibility.Visible;
 
-                    image_controller_icon.Source = new BitmapImage(new Uri(@"/icons/controller/dualsense_connected.png", UriKind.Relative));
+                    //Set controller icon using cached icon
+                    if (image_controller_icon.Source != ControllerConnectedIcon)
+                        image_controller_icon.Source = ControllerConnectedIcon;
+
                     image_controller_icon.Opacity = enabled_opacity;
 
-                    progressbar_battery.Foreground = new System.Windows.Media.SolidColorBrush(ColorFromHue(batterylevel));
-                    progressbar_battery.Value = batterylevel;
+                    //If the battery level is used to display a error code
+                    if (batterylevel > 500)
+                    {
+                        //Make sure the battery icon is not visible
+                        icon_battery.Visibility = Visibility.Hidden;
+                        progressbar_battery.Visibility = Visibility.Hidden;
 
-                    SetChargingIconActive(isCharging);
+                        //Make the charging icon dissapear
+                        SetChargingIconActive(false);
 
-                    UpdateBatteryAnim(batterylevel, isCharging);
+                        //Make sure the battery anim is stopped, to same performance on something that is not being rendered
+                        UpdateBatteryAnim(batterylevel, false);
+
+                        //The batterylevel contains the error code
+                        SetDebugErrorCode(batterylevel, true);
+                    } 
+                    else //No error code
+                    {
+                        //Make sure the battery icon is visible
+                        icon_battery.Visibility = Visibility.Visible;
+                        progressbar_battery.Visibility = Visibility.Visible;
+
+                        progressbar_battery.Foreground = HueToGradient(batterylevel);
+                        progressbar_battery.Value = batterylevel;
+
+                        //Set the charging icon when there is no error code
+                        SetChargingIconActive(isCharging);
+
+                        //Update if the battery blinking anim should play
+                        UpdateBatteryAnim(batterylevel, isCharging);
+
+                        //Make debug error code stop displaying
+                        SetDebugErrorCode(0, false);
+                    }
                 }
                 else
                 {
@@ -115,11 +156,15 @@ namespace DualSenseBatteryMonitor
             color_player_01.GradientStops.Add(new GradientStop((Color)ColorConverter.ConvertFromString("#00bfff"), 0.0));
             color_player_01.GradientStops.Add(new GradientStop((Color)ColorConverter.ConvertFromString("#007399"), 1.0));
 
+            color_player_01.Freeze();
+
             //Player 02
             color_player_02.StartPoint = new Point(0.5, 0);
             color_player_02.EndPoint = new Point(0.5, 1);
             color_player_02.GradientStops.Add(new GradientStop((Color)ColorConverter.ConvertFromString("#ff0000"), 0.0));
             color_player_02.GradientStops.Add(new GradientStop((Color)ColorConverter.ConvertFromString("#990000"), 1.0));
+
+            color_player_02.Freeze();
 
             //Player 03
             color_player_03.StartPoint = new Point(0.5, 0);
@@ -127,11 +172,15 @@ namespace DualSenseBatteryMonitor
             color_player_03.GradientStops.Add(new GradientStop((Color)ColorConverter.ConvertFromString("#00ff40"), 0.0));
             color_player_03.GradientStops.Add(new GradientStop((Color)ColorConverter.ConvertFromString("#009926"), 1.0));
 
+            color_player_03.Freeze();
+
             //Player 04
             color_player_04.StartPoint = new Point(0.5, 0);
             color_player_04.EndPoint = new Point(0.5, 1);
             color_player_04.GradientStops.Add(new GradientStop((Color)ColorConverter.ConvertFromString("#ff00ff"), 0.0));
             color_player_04.GradientStops.Add(new GradientStop((Color)ColorConverter.ConvertFromString("#990099"), 1.0));
+
+            color_player_04.Freeze();
 
             playerColors = new List<Brush> {color_player_01, color_player_02, color_player_03, color_player_04};
         }
@@ -150,11 +199,23 @@ namespace DualSenseBatteryMonitor
                         // true: isControllable so we can stop it later
                         blink_storyboard.Begin(this, true);
                         isPlayingLowBatAnim = true;
+
+                        //Display battery warning icon is not already
+                        if (icon_batterywarning.Visibility == Visibility.Collapsed)
+                        {
+                            icon_batterywarning.Visibility = Visibility.Visible;
+                        }
                     }
                 } else
                 {
                     blink_storyboard.Stop(this);
                     isPlayingLowBatAnim = false;
+
+                    //Make battery warning invisible when charging
+                    if (icon_batterywarning.Visibility == Visibility.Visible)
+                    {
+                        icon_batterywarning.Visibility = Visibility.Hidden;
+                    }
                 }
             }
             //Battery level is higher
@@ -162,6 +223,12 @@ namespace DualSenseBatteryMonitor
             {
                 blink_storyboard.Stop(this);
                 isPlayingLowBatAnim = false;
+
+                //Make battery warning invisible when on higher battery charge level
+                if (icon_batterywarning.Visibility == Visibility.Visible)
+                {
+                    icon_batterywarning.Visibility = Visibility.Hidden;
+                }
             }
         }
 
@@ -181,24 +248,80 @@ namespace DualSenseBatteryMonitor
             }
             else
             {
-                icon_charging.Visibility = Visibility.Hidden;
+                icon_charging.Visibility = Visibility.Collapsed;
             }
 
         }
 
-        //Converts battery level (as hue) to a color
-        public static Color ColorFromHue(double hue)
+        //This function is used to make the error code contained in the battery level variable visible as text
+        private void SetDebugErrorCode(int errorCode, bool shouldShow)
+        {
+            if (shouldShow)
+            {
+                debug_errorcode_text.Text = errorCode.ToString();
+
+                if (debug_errorcode_text.Visibility == Visibility.Collapsed)
+                {
+                    debug_errorcode_text.Visibility = Visibility.Visible;
+                    debug_errorcode_text_text.Visibility = Visibility.Visible;
+                }
+            }
+            else
+            {
+                //Make the visibility command only run if the text is visible
+                 if (debug_errorcode_text.Visibility == Visibility.Visible)
+                {
+                    debug_errorcode_text.Visibility = Visibility.Collapsed;
+                    debug_errorcode_text_text.Visibility = Visibility.Collapsed;
+                }
+            }
+        }
+
+        //Converts battery level (as hue) to a gradient
+        private static LinearGradientBrush HueToGradient(double hue)
+        {
+            int key = (int)Math.Round(hue); //Reduce cache keys to avoid high memory usage
+
+            //Try getting a gradient brush from the cache
+            if (!gradientCache.TryGetValue(key, out var brush))
+            {
+                //No gradient brush for the hue was found
+                //Create new gradient brush
+                brush = new LinearGradientBrush
+                {
+                    StartPoint = new Point(0, 0),
+                    EndPoint = new Point(1, 0)
+                };
+
+                //Add colors to gradient
+                brush.GradientStops.Add(new GradientStop(ColorFromHue(hue, 0.7), 0.0));
+                brush.GradientStops.Add(new GradientStop(ColorFromHue(hue, 0.9), 1.0));
+                
+                //Freeze the brush
+                brush.Freeze();
+
+                //Add brush to gradientcache
+                gradientCache[key] = brush;
+            }
+
+            return brush;
+        }
+
+
+        //Converts hue to a color
+        private static Color ColorFromHue(double hue, double darkness)
         {
             // Normalize hue to [0, 360)
             hue = hue % 360;
             if (hue < 0) hue += 360;
 
             //Offset color
-            //We don't expect that the hue will ever become higher then 360
-            hue = hue * 1.15;
+            hue = 0 - (40-(hue*2));
+            //Clamp to range of 0-100
+            hue = Math.Clamp(hue, 0, 100);
 
             double s = 1.0; // Full saturation
-            double v = 0.9; // Slightly darker
+            double v = darkness;
 
             int hi = (int)(hue / 60) % 6;
             double f = (hue / 60) - Math.Floor(hue / 60);
@@ -219,11 +342,7 @@ namespace DualSenseBatteryMonitor
                 case 5: r = v; g = p; b = q; break;
             }
 
-            return Color.FromRgb(
-                (byte)(r * 255),
-                (byte)(g * 255),
-                (byte)(b * 255)
-            );
+            return Color.FromRgb((byte)(r * 255),(byte)(g * 255),(byte)(b * 255));
         }
     }
 }
