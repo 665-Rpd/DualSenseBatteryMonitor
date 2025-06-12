@@ -1,12 +1,12 @@
 ﻿using HidSharp;
 using Microsoft.Win32;
 using System.Buffers;
-using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Interop;
 using System.Windows.Threading;
+using System.Diagnostics;
 
 namespace DualSenseBatteryMonitor
 {
@@ -262,7 +262,8 @@ namespace DualSenseBatteryMonitor
                                         //Read "Magic Packet" to "wake" controller to 0x31 (Full Bluetooth mode)
                                         WaketofullBT(controller);
                                         result[index++] = (1111, false);
-                                    } else
+                                    }
+                                    else
                                     {
                                         //Basic Bluetooth mode, try waking up as well
                                         WaketofullBT(controller);
@@ -289,9 +290,9 @@ namespace DualSenseBatteryMonitor
                 }
                 catch (Exception ex)
                 {
-                    #if DEBUG
+#if DEBUG
                     Debug.WriteLine($"[Warning] Could not read controller: {ex.Message}");
-                    #endif
+#endif
                 }
                 finally
                 {

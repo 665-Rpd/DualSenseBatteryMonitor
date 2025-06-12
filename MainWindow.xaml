@@ -8,7 +8,7 @@
         Title="DualSense Battery Monitor" Height="400" Width="200" WindowStartupLocation="Manual" Loaded="Window_Loaded"
         Left="0" Top="0" Foreground="White" Background="Transparent" WindowStyle="None" SnapsToDevicePixels="True" Topmost="True" Focusable="False" IsHitTestVisible="False" IsTabStop="False" ResizeMode="NoResize" AllowsTransparency="True" ShowInTaskbar="False" Icon="/icons/window/BatteryMonitor.ico" ShowActivated="False">
     <Grid>
-        <Border BorderThickness="1,1,1,1" CornerRadius="20,0,0,20" SnapsToDevicePixels="True" ClipToBounds="True" ScrollViewer.VerticalScrollBarVisibility="Disabled">
+        <Border BorderThickness="1,1,0,1" CornerRadius="20,0,0,20" SnapsToDevicePixels="True" ClipToBounds="True" ScrollViewer.VerticalScrollBarVisibility="Disabled">
             <Border.Background>
                 <LinearGradientBrush x:Name="gradient_background" EndPoint="0,0" StartPoint="1,1" SpreadMethod="Pad">
                     <GradientStop Color="#FF00439C" Offset="0"/>

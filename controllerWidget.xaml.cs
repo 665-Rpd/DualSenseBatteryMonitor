@@ -85,7 +85,8 @@ namespace DualSenseBatteryMonitor
 
                     SetChargingIconActive(isCharging);
 
-                    UpdateBatteryAnim(batterylevel, isCharging);
+                    //Use true instead of isCharging, so it won't play the animation when nothing is rendering
+                    UpdateBatteryAnim(batterylevel, true);
                 }
             }
             else
