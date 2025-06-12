@@ -66,6 +66,11 @@ This application is inspired by:
 * [nondebug/dualsense](https://github.com/nondebug/dualsense) – DualSense explorer tool
 * [filipmachalowski/TraySense](https://github.com/filipmachalowski/TraySense) – Tray app for battery status
 
+## 🪝 This project uses
+[**HIDSharp**](http://www.zer7.com/software/hidsharp)
+* Copyright 2010-2019 James F. Bellinger
+* Licensed under the Apache License, Version 2.0
+
 ## 📃 License
 MIT License. See [LICENSE](LICENSE) file for details.
 
