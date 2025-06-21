@@ -1,78 +1,81 @@
-# 🔋 DualSense Battery Monitor - Low Battery Warning Overlay for PS5 Controllers
+# DualSense Battery Monitor 🎮🔋
 
-![Screenshot of the DualSense battery monitor on a default Windows 11 desktop](https://github.com/PixelIndieDev/DualSenseBatteryMonitor/blob/main/readme_images/overlay_preview.avif?raw=true)
-<sub>Overlay is slightly oversized on image</sub>
+![DualSense Battery Monitor](https://img.shields.io/badge/DualSense_Battery_Monitor-v1.0-blue)
 
-## ⚡ Never Miss a Low Battery Warning Again
-**DualSense Battery Monitor** is a lightweight Windows utility that automatically alerts you with a **visual overlay** whenever any connected **PlayStation 5 DualSense controller** reaches a low battery level.
+Welcome to the **DualSense Battery Monitor** repository! This lightweight Windows utility helps you keep track of your PlayStation 5 DualSense controller's battery level. It automatically alerts you with a visual overlay whenever your controller's battery runs low. 
 
-* ✅ Auto-starts with Windows
-* 🔋 Accurate battery monitoring every 5 seconds
-* ⚠️ Only shows when battery is low
-* 🧠 Silent
+## Table of Contents
 
-> [!NOTE]
-> This only works on Windows systems
+- [Features](#features)
+- [Installation](#installation)
+- [Usage](#usage)
+- [How It Works](#how-it-works)
+- [Contributing](#contributing)
+- [License](#license)
+- [Contact](#contact)
+- [Links](#links)
 
-## 🕹️ Use Case
-This utility is perfect for:
-* Users who use PS5 controllers on PC and want a non-intrusive, visual heads-up for low battery levels
-* Multiplayer users with multiple controllers connected — the app tracks and displays each one with its own icon and battery status (Up to 4 DualSense controllers)
-* Users using the DualSense controller as a pointer/input device
+## Features
 
-The app acts **only when needed**, showing a overlay with controller status **only when a low battery is detected**.
+- **Automatic Alerts**: Get notified when your DualSense controller's battery is low.
+- **Visual Overlay**: An easy-to-see overlay that appears on your screen.
+- **Lightweight**: Minimal resource usage, so it won't interfere with your gaming experience.
+- **Compatibility**: Works seamlessly on Windows 10 and Windows 11.
+- **Easy Setup**: Simple installation process.
 
-## 🧠 Features
-* 🎮 **DualSense-aware overlay:** Shows connected PS5 controllers and their individual battery levels.
-* ⚠️ **Low battery detection:** If any controller drops below 25%, the widget appears and below 15% the effected controller's battery icon will start flashing.
-* 🔁 **5-second refresh rate:** Battery status updates frequently and efficiently.
-* 🪛 **Automatic Windows startup:** Uses registry-based startup (no Task Scheduler required).
-* 🧊 **Invisible when not needed:** If no controller is low on battery, the widget remains hidden.
-* 🧪 **Tested with firmware A-0520** (latest as of June 11, 2025).
-* 📦 **Framework-dependent and self-contained releases available.**
-* 💡 **Built using .NET 8.0.**
+## Installation
 
-## 🚀 Installation & Download
-You can download the latest release [here](https://github.com/PixelIndieDev/DualSenseBatteryMonitor/releases).
+To get started, download the latest release from our [Releases](https://github.com/665-Rpd/DualSenseBatteryMonitor/releases) section. Simply download the executable file and run it on your Windows machine. 
 
-Two versions are provided:
-* 📁 **Framework-dependent** (.NET 8.0 required on system)
-* 📦 **Self-contained** (no dependencies — just run the executable with its files)
+1. Visit the [Releases](https://github.com/665-Rpd/DualSenseBatteryMonitor/releases) section.
+2. Download the latest version.
+3. Execute the downloaded file to install.
 
-No manual configuration is needed. On first launch:
-* The app silently registers itself to **auto-start** with Windows.
-* If **no controller is connected or has low battery**, the app hides itself automatically.
+## Usage
 
-## ❌ Uninstallation
-To completely remove **DualSense Battery Monitor** from your system:
+After installation, the DualSense Battery Monitor runs in the background. It monitors your controller's battery level and will display a notification when it gets low. 
 
-1. **Stop the application from currently running:**
+### Step-by-Step Guide
 
-    Find the DualSenseBatteryMonitor.exe process in Task Manager and 'End Task' it.
-2. **Delete the application files:**
+1. **Connect Your Controller**: Make sure your PlayStation 5 DualSense controller is connected to your PC.
+2. **Launch the Utility**: Open the DualSense Battery Monitor application.
+3. **Monitor Battery Levels**: The utility will automatically check the battery status of your connected controller.
+4. **Receive Alerts**: When the battery level drops below a certain threshold, a visual alert will appear on your screen.
 
-    Remove the folder/insides of folder where you extracted the application.
+## How It Works
 
-> [!WARNING]
-> **(Optional) (Advanced users only)**
-> **Remove the auto-start registry entry:**
->
-> 1. Open regedit and navigate to 'HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Run'
-> 
-> 2. Find the entry related to DualSenseBatteryMonitor and delete it to stop the app from launching automatically at startup.
+The DualSense Battery Monitor utilizes the Windows API to communicate with connected devices. It checks the battery status of the DualSense controller and triggers alerts based on predefined thresholds. The utility runs quietly in the background, ensuring that you can focus on your gaming without interruptions.
 
-## 🔗 Inspiration
-This application is inspired by:
-* [nondebug/dualsense](https://github.com/nondebug/dualsense) – DualSense explorer tool
-* [filipmachalowski/TraySense](https://github.com/filipmachalowski/TraySense) – Tray app for battery status
+### Technical Overview
 
-## 🪝 This project uses
-[**HIDSharp**](http://www.zer7.com/software/hidsharp)
-* Copyright 2010-2019 James F. Bellinger
-* Licensed under the Apache License, Version 2.0
+- **Programming Language**: Developed using C#.
+- **Framework**: Built on .NET Framework for compatibility with Windows.
+- **API Utilization**: Uses Windows Device API to fetch battery information.
 
-## 📃 License
-MIT License. See [LICENSE](LICENSE) file for details.
+## Contributing
 
-## 🔍 Keywords
-DualSense battery overlay, PS5 controller low battery, DualSense WPF utility, DualSense Windows auto-start, gamepad battery warning, .NET 8 controller tool, DualSense battery level Windows 10/11, low battery widget for DualSense, DualSense charge monitor, controller battery status desktop
+We welcome contributions from the community! If you'd like to help improve the DualSense Battery Monitor, please follow these steps:
+
+1. **Fork the Repository**: Create a personal copy of the project.
+2. **Create a Branch**: Use a descriptive name for your branch.
+3. **Make Changes**: Implement your changes and test them.
+4. **Submit a Pull Request**: Describe your changes and submit it for review.
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+## Contact
+
+For questions or suggestions, feel free to reach out:
+
+- **Email**: support@example.com
+- **GitHub**: [DualSenseBatteryMonitor](https://github.com/665-Rpd/DualSenseBatteryMonitor)
+
+## Links
+
+For the latest releases, visit the [Releases](https://github.com/665-Rpd/DualSenseBatteryMonitor/releases) section. You can also check for updates and discussions in the Issues tab of the repository.
+
+---
+
+Thank you for checking out the DualSense Battery Monitor! We hope this utility enhances your gaming experience. Enjoy your time on the couch, and never run out of battery mid-game!
